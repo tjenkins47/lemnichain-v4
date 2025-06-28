@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lemni Wallet & Validator - {{ wallet_id }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Combined styles from both files */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .custom-container {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            background-color: #fff;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .btn-primary {
+            background-color: #4CAF50;
+            border-color: #4CAF50;
+        }
+        .btn-primary:hover {
+            background-color: #45a049;
+            border-color: #45a049;
+        }
+        .btn-primary:disabled, .btn-success:disabled {
+            background-color: #cccccc;
+            border-color: #cccccc;
+        }
+        .btn-success {
+            background-color: #4CAF50;
+            border-color: #4CAF50;
+        }
+        .btn-success:hover {
+            background-color: #45a049;
+        }
+        .btn-danger {
+            background-color: #F44336;
+            border-color: #F44336;
+        }
+        .btn-danger:hover {
+            background-color: #d32f2f;
+            border-color: #d32f2f;
+        }
+        .transaction {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+        .transaction:last-child {
+            border-bottom: none;
+        }
+        .incoming {
+            color: #4CAF50;
+        }
+        .outgoing {
+            color: #F44336;
+        }
+        .advanced-toggle {
+            margin: 15px 0;
+            font-weight: bold;
+            cursor: pointer;
+            color: #1E88E5;
+            user-select: none;
+        }
+        .advanced-toggle:hover {
+            text-decoration: underline;
+        }
+        .advanced-fields {
+            display: none;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .field-description {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 2px;
+        }
+        .file-upload-status {
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #4CAF50;
+        }
+        textarea.form-control {
+            min-height: 80px;
+        }
+        #validationStatus, #stakeStatus {
+            margin-top: 10px;
+            font-style: italic;
+        }
+        .validator-status {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .validator-active {
+            color: #FF9800;
+            font-weight: bold;
+        }
+        .balance-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .balance-item {
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            border-left: 4px solid #4CAF50;
+        }
+        .balance-item.pending {
+            border-left-color: #FF9800;
+        }
+        .small-text {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 2px;
+        }
+        #countdownTimer {
+            font-weight: bold;
+            color: #FF9800;
+            margin-top: 5px;
+        }
+        
+        /* Tab styling */
+        .nav-tabs {
+            margin-bottom: 20px;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .nav-tabs .nav-link {
+            color: #495057;
+            border: none;
+            padding: 10px 20px;
+            font-weight: 600;
+        }
+        .nav-tabs .nav-link.active {
+            color: #4CAF50;
+            border-bottom: 3px solid #4CAF50;
+            background-color: transparent;
+        }
+        .nav-tabs .nav-link:hover:not(.active) {
+            color: #4CAF50;
+            border-bottom: 3px solid rgba(76, 175, 80, 0.3);
+        }
+        .tab-content {
+            padding: 0;
+        }
+        .tab-pane {
+            display: none;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Begin LemniChain Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="border-bottom: 1px solid #ccc;">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="/">LemniChain</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#lemniNavbar" aria-controls="lemniNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="lemniNavbar">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="/docs/">Docs</a></li>
+        <li class="nav-item"><a class="nav-link" href="/lemni_wallet.html">Wallet</a></li>
+        <li class="nav-item"><a class="nav-link" href="/create_wallet.html">Create Wallet</a></li>
+        <li class="nav-item"><a class="nav-link" href="https://github.com/tjenkins47/lemnichain-docs" target="_blank">GitHub</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<!-- End LemniChain Navbar -->
+
+    <h1 class="text-center mb-4">Lemni Wallet & Validator</h1>
+    
+    <!-- FIXED TAB NAVIGATION -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="wallet-tab" data-bs-toggle="tab" data-bs-target="#wallet" type="button" role="tab" aria-controls="wallet" aria-selected="true">
+                Wallet
+            </button>
+        </li>
+        <!-- VALIDATOR TAB - Only show if user is actually a validator -->
+        {% if is_validator %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="validator-tab" data-bs-toggle="tab" data-bs-target="#validator" type="button" role="tab" aria-controls="validator" aria-selected="false">
+                Validator {% if is_current_validator %}⭐{% endif %}
+            </button>
+        </li>
+        {% endif %}
+    </ul>
+    
+    <div class="tab-content" id="myTabContent">
+        <!-- Wallet Tab Content -->
+        <div class="tab-pane fade show active" id="wallet" role="tabpanel" aria-labelledby="wallet-tab">
+            <!-- Original wallet.html content -->
+            <div class="custom-container">
+                <h2>Wallet ID: {{ wallet_id }}</h2>
+                
+                <div class="balance-info">
+                    <div class="balance-item">
+                        <strong>Confirmed Balance:</strong> {{ get_wallet_display_data(wallet_id, wallet).confirmed_balance }} LEMNI
+                        <div class="small-text">Available for transactions</div>
+                    </div>
+                    <div class="balance-item pending">
+                        <strong>Projected Balance:</strong> {{ get_wallet_display_data(wallet_id, wallet).projected_balance }} LEMNI
+                        <div class="small-text">Including pending transactions</div>
+                    </div>
+                    <div class="balance-item">
+                        <strong>Confirmed Staked:</strong> {{ get_wallet_display_data(wallet_id, wallet).confirmed_stake }} LEMNI
+                        <div class="small-text">Currently earning rewards</div>
+                    </div>
+                    <div class="balance-item pending">
+                        <strong>Projected Staked:</strong> {{ get_wallet_display_data(wallet_id, wallet).projected_stake }} LEMNI
+                        <div class="small-text">Including pending stake changes</div>
+                    </div>
+                </div>
+                
+                <p>Balance: {{ wallet.balance }} LEMNI</p>
+                
+                {% set staked_amount = namespace(value=0) %}
+                {% for tx in wallet.transactions %}
+                    {% if tx.tx_type == 'stake' and tx.sender == wallet_id %}
+                        {% set staked_amount.value = staked_amount.value + tx.amount %}
+                    {% endif %}
+                    {% if tx.tx_type == 'unstake' and tx.recipient == wallet_id %}
+                        {% set staked_amount.value = staked_amount.value - tx.amount %}
+                    {% endif %}
+                {% endfor %}
+                
+                <p>Staked: <span id="stakedAmount">{{ staked_amount.value }}</span> LEMNI</p>
+            </div>
+            
+            <div class="custom-container">
+                <h2>Stake & Unstake</h2>
+                <form id="stakeForm">
+                    {{ send_form.csrf_token }}
+                    <input type="hidden" name="csrf_token" value="{{ send_form.csrf_token._value() }}">
+                    <label for="stake_amount" class="form-label">Amount</label>
+                    <input type="number" id="stake_amount" name="amount" min="0.000001" step="0.000001" placeholder="Enter amount to stake/unstake" class="form-control">
+                    <div class="small-text">Minimum stake for validation: {{ GOVERNANCE_PARAMS.min_stake }} LEMNI</div>
+                    <div class="d-flex gap-2 mt-3">
+                        <button type="button" id="stakeButton" onclick="stakeTokens()" class="btn btn-primary">Stake</button>
+                        <button type="button" id="unstakeButton" onclick="unstakeTokens()" {{ 'disabled' if staked_amount.value <= 0 }} class="btn btn-primary">Unstake</button>
+                    </div>
+                    <div id="stakeStatus"></div>
+                </form>
+            </div>
+            
+            <div class="custom-container">
+                <h2>Send LEMNI</h2>
+                <form id="sendForm" method="post" action="/send/{{ wallet_id }}" enctype="multipart/form-data">
+                    {{ send_form.csrf_token }}
+                    {{ send_form.recipient.label(class="form-label") }} {{ send_form.recipient(class="form-control") }}
+                    {{ send_form.amount.label(class="form-label") }} {{ send_form.amount(class="form-control") }}
+                    <label for="asset_type" class="form-label">Asset Type</label>
+					<input type="hidden" name="tx_type" value="transfer">
+                    <select id="asset_type" name="asset_type" disabled class="form-select">
+                        <option value="cryptocurrency" selected>cryptocurrency</option>
+                    </select>
+                    <div class="advanced-toggle" onclick="toggleAdvancedFields()">+ Advanced Options</div>
+                    
+                    <div id="advancedFields" class="advanced-fields">
+                        <div class="mb-3">
+                            <label for="destination_tag" class="form-label">Destination Tag</label>
+                            <input type="text" id="destination_tag" name="destination_tag" placeholder="Optional: Enter destination tag" class="form-control">
+                            <div class="field-description">A numeric tag to identify the recipient's account or purpose.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="invoice_id" class="form-label">Invoice ID</label>
+                            <input type="text" id="invoice_id" name="invoice_id" placeholder="Optional: Enter invoice ID" class="form-control">
+                            <div class="field-description">A unique identifier to associate with this transaction.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="memo_data" class="form-label">Transaction Memo</label>
+                            <textarea id="memo_data" name="memo_data" rows="3" placeholder="Optional: Add a note to this transaction" class="form-control"></textarea>
+                            <div class="field-description">A memo that will be permanently stored with this transaction.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="file_upload" class="form-label">Attach File</label>
+                            <input type="file" id="file_upload" name="file_upload" disabled class="form-control">
+                            <div class="file-upload-status" id="file_upload_status"></div>
+                            <div class="field-description">Upload a file to be stored with the transaction.</div>
+                            <input type="hidden" id="blob_hash" name="blob_hash">
+                            <input type="hidden" id="uploaded_filename" name="uploaded_filename">
+                        </div>
+                    </div>
+                    
+                    {{ send_form.submit(class="btn btn-primary") }}
+                </form>
+            </div>
+
+            <div class="custom-container">
+                <h2>Transaction History</h2>
+                {% for tx in wallet.transactions %}
+                    <div class="transaction">
+                        {% if tx.sender == wallet_id %}
+                            <p><span class="outgoing">Sent {{ tx.amount }} LEMNI</span> to {{ tx.recipient }}</p>
+                        {% else %}
+                            <p><span class="incoming">Received {{ tx.amount }} LEMNI</span> from {{ tx.sender }}</p>
+                        {% endif %}
+                        <p>Timestamp: {{ tx.timestamp }}</p>
+                        <p>Type: {{ tx.tx_type }}</p>
+                        
+                        {% if tx.tx_type == 'transfer' %}
+                            {% if tx.user_provided_destination_tag is defined and tx.user_provided_destination_tag and tx.destination_tag %}
+                                <p>Destination Tag: {{ tx.destination_tag }}</p>
+                            {% endif %}
+                            {% if tx.user_provided_invoice_id is defined and tx.user_provided_invoice_id and tx.invoice_id %}
+                                <p>Invoice ID: {{ tx.invoice_id }}</p>
+                            {% endif %}
+                            {% if tx.user_provided_memos is defined and tx.user_provided_memos and tx.memos and tx.memos|length > 0 %}
+                                <p>Memo: {{ tx.memos[0].MemoData }}</p>
+                            {% endif %}
+                            {% if tx.blob_hash and tx.metadata and tx.metadata.filename %}
+                                <p>Attached File: {{ tx.metadata.filename }}</p>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- FIXED VALIDATOR TAB CONTENT -->
+        {% if is_validator %}
+        <div class="tab-pane fade" id="validator" role="tabpanel" aria-labelledby="validator-tab">
+            <div class="custom-container">
+                <h2>Validator Status</h2>
+                
+                <div class="balance-info">
+                    <div class="balance-item">
+                        <strong>Validator ID:</strong> {{ wallet_id }}
+                        <div class="small-text">Your validator identifier</div>
+                    </div>
+                    <div class="balance-item {{ 'validator-active' if is_current_validator else '' }}">
+                        <strong>Status:</strong> 
+                        <span id="validator-status">
+                            {% if is_current_validator %}
+                                ⭐ Currently Active Validator
+                            {% else %}
+                                Validator (waiting for turn)
+                            {% endif %}
+                        </span>
+                        <div class="small-text" id="validator-status-detail">
+                            {% if is_current_validator %}
+                                You can validate blocks now!
+                            {% else %}
+                                Current validator: <span id="current-validator-display">{{ current_validator }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="balance-item">
+                        <strong>Staked Amount:</strong> {{ get_wallet_display_data(wallet_id, wallet).confirmed_stake }} LEMNI
+                        <div class="small-text">Meeting minimum requirement of {{ GOVERNANCE_PARAMS.min_stake }} LEMNI</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="custom-container">
+                <h2>Mempool (Next Block)</h2>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>TxID</th>
+                                <th>Sender</th>
+                                <th>Recipient</th>
+                                <th>Amount</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mempool-table">
+                            {% for tx in mempool %}
+                                <tr>
+                                    <td>{{ tx.txid[:8] }}...</td>
+                                    <td>{{ tx.sender[:8] }}...</td>
+                                    <td>{{ tx.recipient[:8] }}...</td>
+                                    <td>{{ tx.amount }} LEMNI</td>
+                                    <td>{{ tx.tx_type }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">No pending transactions</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="custom-container">
+                <h2>Block Validation</h2>
+                <form id="validationForm" method="POST">
+                    {{ validator_form.csrf_token }}
+                    <input type="hidden" name="csrf_token" value="{{ validator_form.csrf_token._value() }}">
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" id="auto_validate" name="auto_validate" class="form-check-input" 
+                               {{ 'checked' if validator_form.auto_validate.data }}>
+                        <label class="form-check-label" for="auto_validate">Automatic Validation</label>
+                        <div class="field-description">Enable to validate blocks automatically when it's your turn.</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <button type="submit" id="verify_block" name="verify_block" class="btn btn-success">
+                            Verify Block
+                        </button>
+                        <div class="field-description">Manually verify the next block within {{ GOVERNANCE_PARAMS.time_for_validation }} seconds.</div>
+                        <div id="countdownTimer"></div>
+                    </div>
+                    <div id="validationStatus"></div>
+                </form>
+            </div>
+
+            <!-- Governance section remains the same -->
+            <div class="custom-container">
+                <h2>Governance Voting</h2>
+				<h3>Current Parameters</h3>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for param, value in GOVERNANCE_PARAMS.items() %}
+                                <tr>
+                                    <td>{{ param }}</td>
+                                    <td>{{ value }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if governance.active %}
+                    <h3>Active Proposals</h3>
+                    {% for proposal in governance.active %}
+                        <div class="balance-item">
+                            <strong>{{ proposal.parameter }}:</strong> {{ proposal.value }}
+                            <div class="small-text">Votes: {{ proposal.votes }}/{{ proposal.required }}</div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No active proposals.</p>
+                {% endif %}
+                <h3>Submit New Proposal</h3>
+                <div class="advanced-toggle" onclick="toggleProposalFields()">+ New Proposal</div>
+                <div id="proposalFields" class="advanced-fields">
+                    <form id="proposalForm" method="POST" action="{{ url_for('validator_view', wallet_id=wallet_id) }}">
+                        {{ validator_form.csrf_token }}
+                        <input type="hidden" name="csrf_token" value="{{ validator_form.csrf_token._value() }}">
+                        <div class="mb-3">
+                            <label for="vote_param" class="form-label">Parameter</label>
+                            {{ validator_form.vote_param(class="form-select", id="vote_param") }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="vote_value" class="form-label">Proposed Value</label>
+                            {{ validator_form.vote_value(class="form-control", id="vote_value") }}
+                            <div class="field-description">Enter the proposed value for the parameter.</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">{{ validator_form.vote_submit.label.text }}</button>
+                    </form>
+                </div>
+                <button class="btn btn-primary mt-3" onclick="window.location.reload()">Refresh Parameters</button>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- ENHANCED JAVASCRIPT FOR AUTOMATIC UPDATES -->
+    <script>
+        let countdownInterval;
+        let statusUpdateInterval;
+        let lastWalletState = {};
+		
+        // Update validator status and button states
+        function updateValidatorStatus() {
+            fetch(`/validator_status/${encodeURIComponent('{{ wallet_id }}')}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Update validator status display
+                        const statusElement = document.getElementById('validator-status');
+                        const statusDetailElement = document.getElementById('validator-status-detail');
+                        const currentValidatorElement = document.getElementById('current-validator-display');
+                        
+                        if (statusElement) {
+                            if (data.is_current_validator) {
+                                statusElement.innerHTML = '⭐ Currently Active Validator';
+                                statusDetailElement.innerHTML = 'You can validate blocks now!';
+                                statusElement.parentElement.classList.add('validator-active');
+                            } else {
+                                statusElement.innerHTML = 'Validator (waiting for turn)';
+                                statusDetailElement.innerHTML = `Current validator: <span id="current-validator-display">${data.current_validator}</span>`;
+                                statusElement.parentElement.classList.remove('validator-active');
+                            }
+                        }
+                        
+                        if (currentValidatorElement) {
+                            currentValidatorElement.textContent = data.current_validator;
+                        }
+                        
+                        // Update tab title
+                        const validatorTab = document.getElementById('validator-tab');
+                        if (validatorTab) {
+                            if (data.is_current_validator) {
+                                validatorTab.innerHTML = 'Validator ⭐';
+                            } else {
+                                validatorTab.innerHTML = 'Validator';
+                            }
+                        }
+                        
+                        // Update verify block button state
+                        updateVerifyButtonState(data.is_current_validator);
+                        
+                        // Update mempool
+                        updateMempoolDisplay(data.mempool || []);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating validator status:', error);
+                });
+        }
+        
+        // Update verify block button state based on conditions
+        function updateVerifyButtonState(isCurrentValidator) {
+            const verifyBlockButton = document.getElementById('verify_block');
+            const autoValidateCheckbox = document.getElementById('auto_validate');
+            
+            if (verifyBlockButton && autoValidateCheckbox) {
+                // Button should be disabled if:
+                // 1. Auto-validate is checked, OR
+                // 2. User is not the current validator
+                const shouldDisable = autoValidateCheckbox.checked || !isCurrentValidator;
+                
+                verifyBlockButton.disabled = shouldDisable;
+                
+                // Update button appearance
+                if (shouldDisable) {
+                    verifyBlockButton.classList.remove('btn-success');
+                    verifyBlockButton.classList.add('btn-secondary');
+                    if (autoValidateCheckbox.checked) {
+                        verifyBlockButton.innerHTML = 'Automatic Validation Enabled';
+                    } else {
+                        verifyBlockButton.innerHTML = 'Waiting for Your Turn';
+                    }
+                } else {
+                    verifyBlockButton.classList.remove('btn-secondary');
+                    verifyBlockButton.classList.add('btn-success');
+                    verifyBlockButton.innerHTML = 'Verify Block';
+                }
+            }
+        }
+        
+        // Update mempool display
+        function updateMempoolDisplay(mempool) {
+            const mempoolTable = document.getElementById('mempool-table');
+            if (mempoolTable) {
+                if (mempool.length === 0) {
+                    mempoolTable.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No pending transactions</td></tr>';
+                } else {
+                    mempoolTable.innerHTML = mempool.map(tx => `
+                        <tr>
+                            <td>${tx.txid.substring(0, 8)}...</td>
+                            <td>${tx.sender.substring(0, 8)}...</td>
+                            <td>${tx.recipient.substring(0, 8)}...</td>
+                            <td>${tx.amount} LEMNI</td>
+                            <td>${tx.tx_type}</td>
+                        </tr>
+                    `).join('');
+                }
+            }
+        }
+        
+        // Start countdown timer
+        function startCountdown(seconds) {
+            clearInterval(countdownInterval);
+            let timeLeft = seconds;
+            
+            function updateTimer() {
+                const timerElement = document.getElementById('countdownTimer');
+                if (timerElement) {
+                    if (timeLeft <= 0) {
+                        timerElement.textContent = 'Time expired';
+                        clearInterval(countdownInterval);
+                    } else {
+                        timerElement.textContent = `Time remaining: ${timeLeft}s`;
+                        timeLeft--;
+                    }
+                }
+            }
+            
+            updateTimer();
+            countdownInterval = setInterval(updateTimer, 1000);
+        }
+
+        // Wallet functions
+        function validateStakeAmount() {
+            const amount = parseFloat(document.getElementById('stake_amount').value);
+            const minStake = parseFloat({{ GOVERNANCE_PARAMS.min_stake|tojson }} || 1.0);
+            const currentStake = parseFloat(document.getElementById('stakedAmount').textContent);
+
+            if (isNaN(amount) || amount <= 0) {
+                document.getElementById('stakeStatus').textContent = 'Please enter a valid positive amount';
+                document.getElementById('stakeStatus').style.color = '#F44336';
+                return false;
+            }
+
+            if (amount < minStake) {
+                const proceed = confirm(`Warning: Stake amount (${amount} LEMNI) is below the minimum required (${minStake} LEMNI) for validator eligibility.
+
+Continue?`);
+                if (!proceed) return false;
+            }
+
+            return true;
+        }
+
+        function validateUnstakeAmount() {
+            const amount = parseFloat(document.getElementById('stake_amount').value);
+            const minStake = parseFloat({{ GOVERNANCE_PARAMS.min_stake|tojson }} || 1.0);
+            const currentStake = parseFloat(document.getElementById('stakedAmount').textContent);
+            const remainingStake = currentStake - amount;
+
+            if (isNaN(amount) || amount <= 0) {
+                document.getElementById('stakeStatus').textContent = 'Please enter a valid positive amount';
+                document.getElementById('stakeStatus').style.color = '#F44336';
+                return false;
+            }
+
+            if (amount > currentStake) {
+                document.getElementById('stakeStatus').textContent = `Cannot unstake more than your staked amount (${currentStake} LEMNI)`;
+                document.getElementById('stakeStatus').style.color = '#F44336';
+                return false;
+            }
+
+            if (remainingStake > 0 && remainingStake < minStake) {
+                const proceed = confirm(`Warning: Unstaking ${amount} LEMNI will leave ${remainingStake} LEMNI staked, which is below the minimum (${minStake} LEMNI) for validator eligibility.
+
+Continue?`);
+                if (!proceed) return false;
+            }
+
+            return true;
+        }
+        
+        function toggleAdvancedFields() {
+            // Get the advanced fields container within the wallet tab
+            var advancedFields = document.querySelector('#wallet #advancedFields');
+            var toggleElement = document.querySelector('#wallet .advanced-toggle');
+            
+            // Check both inline style and computed style
+            if (advancedFields.style.display === 'block' || 
+                window.getComputedStyle(advancedFields).display === 'block') {
+                advancedFields.style.display = 'none';
+                toggleElement.innerHTML = '+ Advanced Options';
+            } else {
+                advancedFields.style.display = 'block';
+                toggleElement.innerHTML = '- Advanced Options';
+            }
+        }
+
+        function toggleProposalFields() {
+            var proposalFields = document.getElementById('proposalFields');
+            var toggleElement = document.querySelector('#validator .advanced-toggle');
+            
+            if (proposalFields.style.display === 'block' || 
+                window.getComputedStyle(proposalFields).display === 'block') {
+                proposalFields.style.display = 'none';
+                toggleElement.innerHTML = '+ New Proposal';
+            } else {
+                proposalFields.style.display = 'block';
+                toggleElement.innerHTML = '- New Proposal';
+            }
+        }
+        
+        function getCurrentBalance() {
+            const balanceElements = document.querySelectorAll('p');
+            for (let elem of balanceElements) {
+                if (elem.textContent.includes('Balance:')) {
+                    const balanceText = elem.textContent.replace('Balance:', '').replace('LEMNI', '').trim();
+                    return parseFloat(balanceText) || 0;
+                }
+            }
+            return 0;
+        }
+
+        function updateProjectedBalances(stakeAmount, isStaking) {
+            const projectedBalanceElem = document.querySelector('.balance-item.pending strong');
+            if (projectedBalanceElem && projectedBalanceElem.nextSibling) {
+                const currentProjected = parseFloat(projectedBalanceElem.nextSibling.textContent.replace(' LEMNI', '')) || 0;
+                const newProjected = isStaking ? 
+                    (currentProjected - parseFloat(stakeAmount)) : 
+                    (currentProjected + parseFloat(stakeAmount));
+                projectedBalanceElem.nextSibling.textContent = ` ${newProjected.toFixed(6)} LEMNI`;
+            }
+
+            const projectedStakeElems = document.querySelectorAll('.balance-item.pending strong');
+            if (projectedStakeElems.length > 1) {
+                const projectedStakeElem = projectedStakeElems[1];
+                if (projectedStakeElem && projectedStakeElem.nextSibling) {
+                    const currentProjectedStake = parseFloat(projectedStakeElem.nextSibling.textContent.replace(' LEMNI', '')) || 0;
+                    const newProjectedStake = isStaking ?
+                        (currentProjectedStake + parseFloat(stakeAmount)) : 
+                        (currentProjectedStake - parseFloat(stakeAmount));
+                    projectedStakeElem.nextSibling.textContent = ` ${newProjectedStake.toFixed(6)} LEMNI`;
+                }
+            }
+        }
+		
+
+		function updateWalletStatus() {
+			fetch(`/wallet/summary/${encodeURIComponent('{{ wallet_id }}')}`)
+				.then(response => response.json())
+				.then(data => {
+					if (data.status === 'success' && data.wallet) {
+						const w = data.wallet;
+
+						const newState = {
+							balance: w.balance,
+							transactions: JSON.stringify(w.transactions),
+						};
+
+						if (JSON.stringify(lastWalletState) === JSON.stringify(newState)) {
+							return; // No changes, skip DOM updates
+						}
+
+						lastWalletState = newState;
+
+						// Update balance field
+						const balanceField = document.querySelector("p:has(strong:contains('Balance:'))");
+						if (balanceField) {
+							balanceField.textContent = `Balance: ${w.balance} LEMNI`;
+						}
+
+						// Update staked amount
+						const stakedField = document.getElementById('stakedAmount');
+						if (stakedField) {
+							let staked = 0;
+							for (let tx of w.transactions || []) {
+								if (tx.tx_type === "stake" && tx.sender === "{{ wallet_id }}") {
+									staked += tx.amount;
+								} else if (tx.tx_type === "unstake" && tx.recipient === "{{ wallet_id }}") {
+									staked -= tx.amount;
+								}
+							}
+							stakedField.textContent = staked.toFixed(6);
+						}
+
+						// Update transaction history
+						const txContainer = document.querySelector("#wallet .custom-container:last-of-type");
+						if (txContainer) {
+							let txHTML = `<h2>Transaction History</h2>`;
+							for (let tx of w.transactions || []) {
+								txHTML += `
+									<div class="transaction">
+										<p><span class="${tx.sender === '{{ wallet_id }}' ? 'outgoing' : 'incoming'}">
+											${tx.sender === '{{ wallet_id }}' ? 'Sent' : 'Received'} ${tx.amount} LEMNI
+										</span> ${tx.sender === '{{ wallet_id }}' ? `to ${tx.recipient}` : `from ${tx.sender}`}</p>
+										<p>Timestamp: ${tx.timestamp}</p>
+										<p>Type: ${tx.tx_type}</p>
+									</div>`;
+							}
+							txContainer.innerHTML = txHTML;
+						}
+					}
+				})
+				.catch(err => console.error("Wallet update error:", err));
+		}
+
+        function updateUnstakeButtonState() {
+            const currentStaked = parseFloat(document.getElementById('stakedAmount').textContent) || 0;
+            const unstakeButton = document.getElementById('unstakeButton');
+            unstakeButton.disabled = currentStaked <= 0;
+            console.log('DEBUG: Updated unstake button state - staked:', currentStaked, 'disabled:', unstakeButton.disabled);
+        }
+
+        function stakeTokens() {
+            if (!validateStakeAmount()) return;
+
+            const amount = document.getElementById('stake_amount').value;
+            const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+            
+            console.log('DEBUG: CSRF Token:', csrfToken);
+            console.log('DEBUG: Amount:', amount);
+            
+            const currentBalance = getCurrentBalance();
+            console.log('DEBUG: Current balance:', currentBalance);
+            
+            if (parseFloat(amount) > currentBalance) {
+                document.getElementById('stakeStatus').textContent = `Cannot stake more than your balance (${currentBalance} LEMNI)`;
+                document.getElementById('stakeStatus').style.color = '#F44336';
+                return;
+            }
+            
+            document.getElementById('stakeStatus').textContent = 'Processing stake...';
+            document.getElementById('stakeStatus').style.color = '#1E88E5';
+            
+            document.getElementById('stakeButton').disabled = true;
+            document.getElementById('unstakeButton').disabled = true;
+            
+            const timeoutId = setTimeout(() => {
+                document.getElementById('stakeStatus').textContent = 'Request is taking longer than expected. Refreshing page...';
+                window.location.reload();
+            }, 8000);
+            
+            fetch('/stake/{{ wallet_id }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: `amount=${encodeURIComponent(amount)}&csrf_token=${encodeURIComponent(csrfToken)}`
+            })
+            .then(response => {
+                clearTimeout(timeoutId);
+                console.log('DEBUG: Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('DEBUG: Response data:', data);
+                if (data.status === 'success') {
+                    document.getElementById('stakeStatus').textContent = `Successfully staked ${amount} LEMNI.`;
+                    document.getElementById('stakeStatus').style.color = '#4CAF50';
+                    updateProjectedBalances(amount, true);
+                    updateUnstakeButtonState();
+                    setTimeout(() => window.location.reload(), 2000);
+                } else {
+                    document.getElementById('stakeStatus').textContent = `Staking failed: ${data.message}`;
+                    document.getElementById('stakeStatus').style.color = '#F44336';
+                }
+            })
+            .catch(error => {
+                clearTimeout(timeoutId);
+                console.error('Staking error:', error);
+                document.getElementById('stakeStatus').textContent = `Staking error: ${error.message}`;
+                document.getElementById('stakeStatus').style.color = '#F44336';
+                setTimeout(() => window.location.reload(), 2000);
+            })
+            .finally(() => {
+                document.getElementById('stakeButton').disabled = false;
+                document.getElementById('unstakeButton').disabled = false;
+            });
+        }
+
+        function unstakeTokens() {
+            if (!validateUnstakeAmount()) return;
+
+            const amount = document.getElementById('stake_amount').value;
+            const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+            
+            document.getElementById('stakeStatus').textContent = 'Processing unstake...';
+            document.getElementById('stakeStatus').style.color = '#1E88E5';
+            
+            document.getElementById('stakeButton').disabled = true;
+            document.getElementById('unstakeButton').disabled = true;
+            
+            const timeoutId = setTimeout(() => {
+                document.getElementById('stakeStatus').textContent = 'Request is taking longer than expected. Refreshing page...';
+                window.location.reload();
+            }, 8000);
+            
+            fetch('/unstake/{{ wallet_id }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: `amount=${encodeURIComponent(amount)}&csrf_token=${encodeURIComponent(csrfToken)}`
+            })
+            .then(response => {
+                clearTimeout(timeoutId);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('stakeStatus').textContent = `Successfully unstaked ${amount} LEMNI.`;
+                    document.getElementById('stakeStatus').style.color = '#4CAF50';
+                    updateProjectedBalances(amount, false);
+                    updateUnstakeButtonState();
+                    setTimeout(() => window.location.reload(), 2000);
+                } else {
+                    document.getElementById('stakeStatus').textContent = `Unstaking failed: ${data.message}`;
+                    document.getElementById('stakeStatus').style.color = '#F44336';
+                }
+            })
+            .catch(error => {
+                clearTimeout(timeoutId);
+                console.error('Unstaking error:', error);
+                document.getElementById('stakeStatus').textContent = `Unstaking error: ${error.message}`;
+                document.getElementById('stakeStatus').style.color = '#F44336';
+                setTimeout(() => window.location.reload(), 2000);
+            })
+            .finally(() => {
+                document.getElementById('stakeButton').disabled = false;
+                document.getElementById('unstakeButton').disabled = false;
+            });
+        }
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update unstake button state for wallet tab
+            updateUnstakeButtonState();
+            
+            // Set up validator tab if it exists
+            const validatorTab = document.getElementById('validator-tab');
+            if (validatorTab) {
+                // Initial validator status update
+                updateValidatorStatus();
+                
+                // Set up periodic updates every 5 seconds
+                statusUpdateInterval = setInterval(updateValidatorStatus, 5000);
+                
+                // Set up auto-validate checkbox behavior
+                const autoValidateCheckbox = document.getElementById('auto_validate');
+                if (autoValidateCheckbox) {
+                    autoValidateCheckbox.addEventListener('change', function() {
+                        // Immediately update button state when checkbox changes
+                        fetch(`/validator_status/${encodeURIComponent('{{ wallet_id }}')}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === 'success') {
+                                    updateVerifyButtonState(data.is_current_validator);
+                                }
+                            });
+                        
+                        // Clear countdown if auto-validate is enabled
+                        if (this.checked) {
+                            clearInterval(countdownInterval);
+                            const timerElement = document.getElementById('countdownTimer');
+                            if (timerElement) timerElement.textContent = '';
+                        }
+                    });
+                }
+				// Periodically refresh wallet tab every 5 seconds
+				walletUpdateInterval = setInterval(updateWalletStatus, 5000);
+            }
+            
+            // Handle form submissions with enhanced error handling
+            const validationForm = document.getElementById('validationForm');
+            if (validationForm) {
+                validationForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(this);
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    const originalText = submitButton.innerHTML;
+                    
+                    submitButton.disabled = true;
+                    submitButton.innerHTML = 'Processing...';
+                    
+                    fetch(`/validator/${encodeURIComponent('{{ wallet_id }}')}`, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const statusElement = document.getElementById('validationStatus');
+                        if (data.status === 'success') {
+                            statusElement.textContent = data.message;
+                            statusElement.style.color = '#4CAF50';
+                            if (data.countdown) {
+                                startCountdown(data.countdown);
+                            }
+                        } else {
+                            statusElement.textContent = `Error: ${data.message}`;
+                            statusElement.style.color = '#F44336';
+                        }
+                    })
+                    .catch(error => {
+                        const statusElement = document.getElementById('validationStatus');
+                        statusElement.textContent = `Error: ${error.message}`;
+                        statusElement.style.color = '#F44336';
+                    })
+                    .finally(() => {
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = originalText;
+                    });
+                });
+            }
+
+            // Wallet form event listeners
+            const fileUpload = document.getElementById('file_upload');
+            if (fileUpload) {
+                fileUpload.addEventListener('change', function(e) {
+                    if (this.disabled) return;
+                    
+                    var file = this.files[0];
+                    if (!file) return;
+                    
+                    var formData = new FormData();
+                    formData.append('file', file);
+                    
+                    document.getElementById('file_upload_status').textContent = 'Uploading...';
+                    
+                    fetch('/upload_file', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            document.getElementById('blob_hash').value = data.blob_hash;
+                            document.getElementById('uploaded_filename').value = data.filename;
+                            document.getElementById('file_upload_status').textContent = `File uploaded: ${data.filename}`;
+                        } else {
+                            document.getElementById('file_upload_status').textContent = `Upload failed: ${data.message}`;
+                            document.getElementById('file_upload_status').style.color = '#F44336';
+                        }
+                    })
+                    .catch(error => {
+                        document.getElementById('file_upload_status').textContent = `Upload error: ${error}`;
+                        document.getElementById('file_upload_status').style.color = '#F44336';
+                    });
+                });
+            }
+            
+            const sendForm = document.getElementById('sendForm');
+            if (sendForm) {
+                sendForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    var formData = new FormData(this);
+                    
+                    var memoData = document.getElementById('memo_data').value;
+                    if (memoData) {
+                        var memoObj = [{
+                            "MemoType": "Note",
+                            "MemoData": memoData,
+                            "MemoFormat": "text/plain"
+                        }];
+                        formData.delete('memo_data');
+                        formData.append('memos', JSON.stringify(memoObj));
+                    }
+                    
+                    const submitButton = this.querySelector('input[type="submit"]');
+                    const originalText = submitButton.value;
+                    submitButton.value = 'Sending...';
+                    submitButton.disabled = true;
+                    
+                    const timeoutId = setTimeout(() => {
+                        submitButton.value = 'Request taking longer than expected...';
+                        setTimeout(() => window.location.reload(), 1000);
+                    }, 8000);
+                    
+                    fetch('/send/{{ wallet_id }}', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        clearTimeout(timeoutId);
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.status === 'success') {
+                            alert('Transaction sent successfully!');
+                            window.location.reload();
+                        } else {
+                            alert(`Error: ${data.message}`);
+                            submitButton.value = originalText;
+                            submitButton.disabled = false;
+                        }
+                    })
+                    .catch(error => {
+                        clearTimeout(timeoutId);
+                        console.error('Transaction error:', error);
+                        alert(`Error sending transaction: ${error}`);
+                        submitButton.value = originalText;
+                        submitButton.disabled = false;
+                        setTimeout(() => window.location.reload(), 2000);
+                    });
+                });
+            }
+
+            // Handle proposal form
+            const proposalForm = document.getElementById('proposalForm');
+            if (proposalForm) {
+                proposalForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(this);
+                    
+                    fetch(`/validator/${encodeURIComponent('{{ wallet_id }}')}`, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.status === 'success') {
+                            document.getElementById('validationStatus').textContent = 'Proposal submitted successfully!';
+                            document.getElementById('validationStatus').style.color = '#4CAF50';
+                            setTimeout(() => window.location.reload(), 2000);
+                        } else {
+                            document.getElementById('validationStatus').textContent = `Proposal failed: ${data.message}`;
+                            document.getElementById('validationStatus').style.color = '#F44336';
+                        }
+                    })
+                    .catch(error => {
+                        document.getElementById('validationStatus').textContent = `Proposal error: ${error.message}`;
+                        document.getElementById('validationStatus').style.color = '#F44336';
+                    });
+                });
+            }
+        });
+        
+        // Cleanup intervals when leaving page
+        window.addEventListener('beforeunload', function() {
+            clearInterval(countdownInterval);
+            clearInterval(statusUpdateInterval);
+			clearInterval(walletUpdateInterval);
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
