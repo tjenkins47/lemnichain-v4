@@ -1,90 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lemni Wallet – LemniChain</title>
+    <meta charset="UTF-8">
+    <title>Lemni Wallet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap and Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-  <!-- Custom styles and scripts -->
-  <link rel="stylesheet" href="../style.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-  
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #fff;
-      color: #222;
-      margin: 0;
-      padding: 80px 10% 40px;
-    }
-    main {
-      max-width: 850px;
-      margin: auto;
-    }
-    h1, h2 {
-      color: #2c3e50;
-      border-bottom: 2px solid #eee;
-      padding-bottom: 0.25rem;
-    }
-  </style>
+    <!-- Site-wide styles -->
+    <link rel="stylesheet" href="/style.css" />
+
+    <style>
+        main {
+            max-width: 60%;
+            margin: 80px auto 40px;
+        }
+
+        .wallet-image {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                max-width: 90%;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Navbar will be loaded dynamically -->
+    <div id="navbar-placeholder"></div>
 
-  <!-- Dynamic Bootstrap navbar -->
-  <div id="navbar-placeholder" class="fixed-top"></div>
+    <main>
+        <img src="/images/LemniWallet_1.png" alt="Wallet 1" class="wallet-image">
+        <img src="/images/LemniWallet_2.png" alt="Wallet 2" class="wallet-image">
+        <img src="/images/LemniWallet_3.png" alt="Wallet 3" class="wallet-image">
+        <img src="/images/LemniWallet_4.png" alt="Wallet 4" class="wallet-image">
+        <img src="/images/LemniWallet_5.png" alt="Wallet 5" class="wallet-image">
+        <img src="/images/LemniWallet_6.png" alt="Wallet 6" class="wallet-image">
+    </main>
 
-  <main>
-  
-<h2>Lemni Wallet & Validator Dashboard</h2>
-
-<p>This interface allows users to:</p>
-<ul>
-  <li>View token balances</li>
-  <li>Stake and unstake LEMNI tokens</li>
-  <li>Access validator configuration</li>
-  <li>Participate in governance voting</li>
-</ul>
-
-<hr>
-
-<h3>Balance Overview</h3>
-<p><strong>Total Balance:</strong> 1,250.00 LEMNI</p>
-<p><strong>Staked:</strong> 1,000.00 LEMNI</p>
-<p><strong>Available:</strong> 250.00 LEMNI</p>
-
-<hr>
-
-<h3>Staking Controls</h3>
-<form>
-  <label for="stake">Stake Amount:</label>
-  <input type="number" id="stake" name="stake" min="0" step="1">
-  <button type="submit">Stake</button>
-</form>
-
-<form style="margin-top:1em;">
-  <label for="unstake">Unstake Amount:</label>
-  <input type="number" id="unstake" name="unstake" min="0" step="1">
-  <button type="submit">Unstake</button>
-</form>
-
-<hr>
-
-<h3>Governance Access</h3>
-<p>Current proposals:</p>
-<ol>
-  <li>Increase validator rewards</li>
-  <li>Deploy treasury for R&D grants</li>
-</ol>
-<button>Vote Now</button>
-
-  </main>
-
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="main.js" defer></script>
-
+    <!-- Load navbar and initialize theme toggle -->
+    <script src="/html/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
